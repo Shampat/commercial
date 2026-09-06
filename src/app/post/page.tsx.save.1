@@ -1,0 +1,13 @@
+"use client"
+import { useState } from 'react'
+import { addListing } from '@/lib/db'
+export default function Post(){
+ const [form,setForm]=useState({title:'',city:'Brampton',province:'ON',area:'1200',price:'2500',description:'Great office'})
+ const peopleMin = Math.max(1, Math.round(Number(form.area||0)/150)-2)
+ const peopleMax = peopleMin+5
+ const is10k = Number(form.area)>=10000
+ const submit=async()=>{
+  try{ await addListing({id:Date.now().toString(),title:form.title,city:form.city,province:form.province,country:'Canada',area:Number(form.area),price:Number(form.price),peopleMin,peopleMax,description:form.description,images:['https://images.unsplash.com/photo-1497366216548-37526070297c?w=800'],contact:'Owner',email:'owner@example.com',type:'Office'}); location.href='/' }
+  catch(e:any){ alert('Error: '+e.message) }
+ }
+ return <div className="p-6 max-w-xl mx-auto"><h1 className="text-3xl font-black">Post Space - Commercial Spaces</h1><div className="bg-yellow-200 p-3 rounded-xl mt-4 font-bold">SpaceFit™ Auto: Best for {peopleMin}-{peopleMax} people {is10k && <span className="bg-black text-white px-2 py-1 rounded-full ml-2">10K+ LARGE FORMAT</span>}</d
