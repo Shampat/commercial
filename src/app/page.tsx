@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import RealMap from "@/components/RealMap";
-import { useRouter } from 'next/navigation';
 import { getListings } from '@/lib/db';
 import { 
   Building2, Store, Factory, Warehouse as WarehouseIcon, Stethoscope, UtensilsCrossed, 
@@ -22,7 +21,7 @@ const CATEGORIES = [
   { id: 'plaza', name: 'Plaza', count: 6, Icon: Building },
 ];
 
-const CITIES_FALLBACK = ['Brampton', 'Mississauga', 'Caledon', 'Vaughan', 'Etobicoke', 'Oakville', 'Toronto', 'Milton', 'Bolton', 'Georgetown'];
+const CITIES = ['Brampton', 'Mississauga', 'Caledon', 'Vaughan', 'Etobicoke', 'Oakville', 'Toronto', 'Milton', 'Bolton', 'Georgetown'];
 const LEASE_TYPES = ['For Lease', 'For Sale', 'For Sublease', 'Assignment'];
 const SQFT_OPTIONS = ['10K Exact', '5K-10K', '10K-15K', '15K+', 'Custom'];
 const PRICE_OPTIONS = ['$0-$10K', '$10K-$20K', '$20K-$30K', '$30K+', 'Custom'];
@@ -108,7 +107,7 @@ const TERMS = [
   { term: 'Triple Net (NNN)', def: 'Tenant pays property taxes, insurance, maintenance on top of rent.', ex: 'Industrial in Vaughan: NNN $12 PSF on top of base.', color: 'bg-white' },
   { term: 'Double Net (NN)', def: 'Tenant pays taxes + insurance, landlord pays maintenance.', ex: 'Common for older plazas in Etobicoke.', color: 'bg-orange-50' },
   { term: 'NOI', def: 'Net Operating Income – income after operating expenses.', ex: 'NOI used to value a 10K plaza at 6% cap.', color: 'bg-white' },
-  { term: 'CAP Rate', def: 'Return on investment: NOI / Property Value.', ex: 'Retail cap rates 5.5% - 6.5% (Canada) / 8-9% (India).', color: 'bg-white' },
+  { term: 'CAP Rate', def: 'Return on investment: NOI / Property Value.', ex: 'GTA West retail cap rates 5.5% - 6.5% in 2024.', color: 'bg-white' },
   { term: 'TMI', def: 'Taxes, Maintenance, Insurance – additional rent components.', ex: 'TMI $14.50 PSF in Brampton gateway area.', color: 'bg-orange-50' },
   { term: 'Base Rent', def: 'Minimum rent paid for use of space, before TMI.', ex: 'Base $16 PSF for 10K sq ft = $13,333/mo.', color: 'bg-white' },
   { term: 'Additional Rent', def: 'Extra charges beyond base – TMI, utilities etc.', ex: 'Additional rent adds $12K/mo on 10K unit.', color: 'bg-white' },
@@ -118,7 +117,6 @@ const TERMS = [
 ];
 
 export default function Page() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('listings');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [city, setCity] = useState('All Cities');
@@ -149,16 +147,7 @@ export default function Page() {
       setDbListings(mapped);
     });
   }, []);
-  const dbCountries = [...new Set((dbListings as any[]).map((d:any)=>d.country).filter(Boolean))];
-  const CITIES = dbListings.length>0 ? [...new Set([...PROPERTIES.map((p:any)=>p.city), ...dbListings.map((d:any)=>d.city)].filter(Boolean))] as string[] : CITIES_FALLBACK;
   const DISPLAY_PROPERTIES = dbListings.length > 0 ? [...dbListings, ...PROPERTIES.slice(0, 70-dbListings.length)] : PROPERTIES;
-  const dynamicCounts = {
-    all: DISPLAY_PROPERTIES.length,
-    office: DISPLAY_PROPERTIES.filter((p:any)=>p.type?.toLowerCase().includes('office')).length,
-    land: DISPLAY_PROPERTIES.filter((p:any)=>p.type?.toLowerCase().includes('land')).length,
-  };
-  const countryPills = [...new Set(DISPLAY_PROPERTIES.map((p:any)=>p.country).filter(Boolean))];
- const dynamicCities = [...new Set(DISPLAY_PROPERTIES.map((p:any)=>p.city).filter(Boolean))];
 
   useEffect(() => {
     if (toast) {
@@ -272,7 +261,6 @@ export default function Page() {
           ))}
         </div>
       </header>
- 
 
       {/* Hero */}
       <div className="mx-auto max-w-[1440px] px-4 md:px-8 pt-8 md:pt-12 pb-6">
@@ -284,7 +272,7 @@ export default function Page() {
             <div className="flex flex-wrap items-center gap-2.5 mt-4">
               <span className="inline-flex items-center gap-2 bg-zinc-900 text-white text-[12px] font-semibold px-3 py-1 rounded-full">
                 <span className="w-4 h-4 bg-white text-zinc-900 rounded-full flex items-center justify-center text-[10px] font-bold">16</span>
-                {dbListings.length} Live • {dynamicCities.length} Cities • {dbCountries.join(' + ') || 'Canada'}
+                16 spaces • GTA West
               </span>
               <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium px-3 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live inventory
@@ -292,7 +280,7 @@ export default function Page() {
             </div>
             <p className="mt-3 text-[13.5px] text-zinc-500 max-w-[640px] leading-[1.5]">
               Office, Retail, Industrial, Warehouse, Medical, Restaurant, Plaza spaces in{' '}
-              <span className="text-zinc-900 font-medium">{[...new Set([...PROPERTIES.map((p:any)=>p.city), ...dbListings.map((d:any)=>d.city)].filter(Boolean))].slice(0,6).join(", ")} </span> • Verified • TMI Included
+              <span className="text-zinc-900 font-medium">Brampton, Mississauga, Caledon, Vaughan</span> • Verified • TMI Included
             </p>
           </div>
           <div className="hidden md:flex items-center gap-2 text-[12px] text-zinc-400">
@@ -309,7 +297,7 @@ export default function Page() {
             <div className="flex items-start justify-between gap-4 mb-8">
               <div>
                 <h2 className="text-[24px] md:text-[30px] font-bold tracking-tight">Commercial Terms • Ontario</h2>
-                <p className="text-[13.5px] text-zinc-500 mt-2 max-w-[600px]">12 essential terms every tenant, landlord and investor should know - same rules for Canada, India, USA.</p>
+                <p className="text-[13.5px] text-zinc-500 mt-2 max-w-[600px]">12 essential terms every tenant, landlord and investor should know for GTA West 10K commercial.</p>
               </div>
               <button onClick={() => setActiveTab('listings')} className="px-4 py-2 rounded-full bg-zinc-900 text-white text-[13px] font-medium">Back to Listings</button>
             </div>
@@ -333,12 +321,38 @@ export default function Page() {
       ) : activeTab === 'map' ? (
         /* MAP TAB */
         <div className="mx-auto max-w-[1440px] px-4 md:px-8 pb-12">
-          <div className="rounded- overflow-hidden border border-zinc-200 bg-white h- relative">
-          <RealMap listings={dbListings} />
+          <div className="rounded-[24px] overflow-hidden border border-zinc-200 bg-[#F6F1E9] h-[640px] relative">
+            {/* Grid pattern */}
+            <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <div className="w-[320px] h-[320px] rounded-full border border-dashed border-zinc-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                <div className="w-[200px] h-[200px] rounded-full border border-dashed border-zinc-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                {/* Clusters */}
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-14 h-14 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold text-[18px] shadow-[0_8px_24px_rgba(0,0,0,0.25)] border-4 border-white">14</div>
+                  <div className="mt-2 bg-zinc-900 text-white text-[11px] font-medium px-2.5 py-1 rounded-full shadow">Mississauga • 14×10K</div>
+                </div>
+                <div className="absolute -top-12 -left-20 bg-white border border-zinc-200 rounded-full px-3 py-1.5 text-[12px] font-medium shadow flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-zinc-900 text-white flex items-center justify-center text-[11px] font-bold">6</div>Brampton</div>
+                <div className="absolute -bottom-8 left-12 bg-white border border-zinc-200 rounded-full px-3 py-1.5 text-[12px] font-medium shadow flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-zinc-900 text-white flex items-center justify-center text-[11px] font-bold">8</div>Vaughan • 8×10K</div>
+                <div className="absolute top-10 -right-24 bg-[#FF6A00] text-white border border-[#FF6A00] rounded-full px-3 py-1.5 text-[12px] font-bold shadow flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-white text-[#FF6A00] flex items-center justify-center text-[11px] font-bold">3</div>Caledon</div>
+              </div>
+            </div>
+            <div className="absolute bottom-4 left-4 right-4 md:left-4 md:right-auto flex gap-3">
+              <div className="bg-zinc-900 text-white rounded-2xl px-4 py-3 text-[12px] leading-[1.4] shadow-xl flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><MapIcon className="w-4 h-4" /></div>
+                <div>
+                  <div className="font-semibold">commercial.akalhom...</div>
+                  <div className="text-white/60 text-[11px]">Canonical: https://commercial.akalhom... </div>
+                </div>
+              </div>
+              <div className="hidden md:flex bg-white border border-zinc-200 rounded-2xl px-4 py-3 text-[12px] shadow items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /> 31 clusters • Drag to explore • Scroll to zoom
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    ) : activeTab === 'tools' ? (
+      ) : activeTab === 'tools' ? (
         <div className="mx-auto max-w-[1440px] px-4 md:px-8 pb-16">
           <div className="rounded-[24px] border border-zinc-200 p-10 text-center bg-zinc-50">
             <Wrench className="w-10 h-10 mx-auto text-zinc-300 mb-4" />
@@ -550,7 +564,7 @@ export default function Page() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => triggerToast(`Chat with ${prop.agent.name}`)} className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center hover:bg-emerald-100 transition-colors"><MessageCircle className="w-4 h-4" /></button>
-                          <button onClick={() => prop.is_real ? router.push(`/listing/${prop.id}`) : triggerToast(`Demo ${prop.id} - add real listing in /post`)} className="h-8 px-3.5 rounded-full bg-zinc-900 text-white text-[12px] font-medium hover:bg-black transition-colors">View</button>
+                          <button onClick={() => triggerToast(`Viewing ${prop.id}`)} className="h-8 px-3.5 rounded-full bg-zinc-900 text-white text-[12px] font-medium hover:bg-black transition-colors">View</button>
                         </div>
                       </div>
                     </div>
@@ -599,9 +613,7 @@ export default function Page() {
         </div>
       )}
 
-      <div className="mx-auto max-w- px-6 mt-12 mb-6"><div className="flex items-center gap-2 mb-3"><div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div><h2 className="text- font-bold">Live Supabase Map • {dbListings.length} listings • Brampton</h2></div><RealMap listings={dbListings} /></div>
-
-{/* Footer */}
+      {/* Footer */}
       <footer className="border-t border-zinc-200 bg-white">
         <div className="mx-auto max-w-[1440px] px-4 md:px-8 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
