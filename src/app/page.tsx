@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import RealMap from "@/components/RealMap";
 import { getListings } from '@/lib/db';
 import { 
   Building2, Store, Factory, Warehouse as WarehouseIcon, Stethoscope, UtensilsCrossed, 
@@ -121,9 +120,9 @@ export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [city, setCity] = useState('All Cities');
   const [leaseType, setLeaseType] = useState('Lease Type');
-  const [sqft, setSqft] = useState('all');
+  const [sqft, setSqft] = useState('10K Exact');
   const [price, setPrice] = useState('Price');
-  const [activePills, setActivePills] = useState([]);
+  const [activePills, setActivePills] = useState(['Office Space', '10K Exact', 'Brampton']);
   const [sort, setSort] = useState('Newest');
   const [toast, setToast] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -271,8 +270,8 @@ export default function Page() {
             </h1>
             <div className="flex flex-wrap items-center gap-2.5 mt-4">
               <span className="inline-flex items-center gap-2 bg-zinc-900 text-white text-[12px] font-semibold px-3 py-1 rounded-full">
-                
-                {dbListings.length} spaces • GTA West
+                <span className="w-4 h-4 bg-white text-zinc-900 rounded-full flex items-center justify-center text-[10px] font-bold">16</span>
+                16 spaces • GTA West
               </span>
               <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium px-3 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live inventory
