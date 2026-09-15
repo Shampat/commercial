@@ -3,22 +3,13 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { getListingById } from "@/lib/db"
 import { MapPin, ArrowLeft, ShieldCheck } from "lucide-react"
-
-export default function ListingDetail() {
+export default function ListingDetail(){
   const { id } = useParams()
   const router = useRouter()
   const [listing, setListing] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (id) {
-      getListingById(id as string).then(d => { setListing(d); setLoading(false) })
-    }
-  }, [id])
-
-  if (loading) return <div className="p-10 text-center">Loading {id}...</div>
-  if (!listing) return <div className="p-10 text-center">Not found. <button onClick={()=>router.push('/')} className="underline">Back home</button></div>
-
+  useEffect(()=>{ if(id){ getListingById(id as string).then(d=>{ setListing(d); setLoading(false) }) } },[id])
+  if(loading) return <div className="p-10 text-center">Loading {id}...</div>
   return (
     <div className="min-h-screen bg-white">
       <header className="h- border-b flex items-center px-6 gap-3">
@@ -31,23 +22,17 @@ export default function ListingDetail() {
           <div className="rounded- overflow-hidden border bg-zinc-100">
             <img src={listing.images?.[0] || "/demo/office_space_blueprint_card.jpg"} className="w-full h- object-cover" alt="" />
           </div>
-          <div className="flex gap-2 mt-3 overflow-auto">
+          <div className="flex gap-2 mt-3">
             {(listing.images||[]).slice(0,5).map((img:string,i:number)=><img key={i} src={img} className="w-20 h-20 rounded-xl object-cover border" alt="" />)}
           </div>
         </div>
         <div>
-          <span className="inline-flex text- font-bold tracking-widest bg-[#FF6A00] text-white px-3 py-1 rounded-full">{listing.sqft || listing.area || 10000} SQ FT • {listing.type}</span>
-          <h1 className="text- font-bold leading-tight mt-3">{listing.title}</h1>
+          <span className="inline-flex text- font-bold tracking-widest bg-[#FF6A00] text-white px-3 py-1 rounded-full">{listing.sqft || 10000} SQ FT</span>
+          <h1 className="text- font-bold mt-3">{listing.title}</h1>
           <div className="flex items-center gap-1 text-zinc-500 text- mt-2"><MapPin className="w-4 h-4"/> {listing.address}, {listing.city}</div>
-          <div className="text- font-black mt-4">{typeof listing.price === 'number'? `$${listing.price.toLocaleString()}/mo` : listing.price}</div>
-          <p className="mt-6 text-[13.5px] leading-[1.6] text-zinc-600">{listing.description || "Premium commercial space - direct owner listing."}</p>
-          <div className="mt-6 p-4 rounded-2xl border bg-zinc-50">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold">OW</div>
-              <div><div className="font-medium text-">{listing.contact || "Direct Owner"}</div><div className="text- text-[#FF6A00] font-bold">PRO</div></div>
-            </div>
-            <button onClick={()=>alert('Contact: ' + (listing.contact||'Owner'))} className="w-full mt-4 h-11 rounded-full bg-zinc-900 text-white font-medium">Contact Owner</button>
-          </div>
+          <div className="text- font-black mt-4">{listing.price}</div>
+          <p className="mt-6 text-[13.5px] text-zinc-600">{listing.description}</p>
+          <button onClick={()=>router.push('/')} className="w-full mt-6 h-11 rounded-full bg-zinc-900 text-white">Back to Listings</button>
         </div>
       </div>
     </div>
