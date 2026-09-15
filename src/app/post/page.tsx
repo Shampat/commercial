@@ -5,6 +5,14 @@ import { addListing, supabase } from "@/lib/db"
 export default function PostPage() {
   const [title, setTitle] = useState("10,000 Sq Ft Premium Office")
   const [city, setCity] = useState("Brampton")
+  const [country, setCountry] = useState("Canada")
+  const [state, setState] = useState("Ontario")
+  const [district, setDistrict] = useState("Peel")
+  const [village_area, setVillage] = useState("")
+  const [land_subtype, setLandSubtype] = useState("Commercial Land")
+  const [currency, setCurrency] = useState("CAD")
+  const formData = {country, state, province: state, district, village_area, land_subtype, currency}
+
   const [price, setPrice] = useState("18500")
   const [type, setType] = useState("Office")
   const [address, setAddress] = useState("50 Sunny Meadow Blvd, Brampton")
@@ -41,10 +49,10 @@ export default function PostPage() {
     try {
       const imageUrls = await uploadImages()
       await addListing({
-        title, city, price: Number(price), type,
+        title: `${type}${land_subtype? ` - ${land_subtype}` : ""} - ${city}`, city, price: Number(price), type,
         description: "Premium commercial space - direct owner listing",
         images: imageUrls,
-        address, province: "ON", country: "Canada",
+        address, province: formData.state || formData.province, country: formData.country, district: formData.district, village_area: formData.village_area, land_subtype: formData.land_subtype, currency: formData.currency,
         sqft: Number(sqft), area: Number(sqft),
         peoplemin: 5, peoplemax: 15, verified: true, contact: "Direct Owner"
       })
@@ -61,7 +69,17 @@ export default function PostPage() {
     <div className="max-w-lg mx-auto mt-10 p-6 border rounded bg-white">
       <h1 className="text-xl font-bold mb-4">Add Listing + Real Images</h1>
       <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Title" className="w-full border p-2 mb-2" />
-      <input value={city} onChange={e=>setCity(e.target.value)} placeholder="City" className="w-full border p-2 mb-2" />
+      <div className="grid grid-cols-3 gap-2 mb-2">
+        <select value={country} onChange={e=>setCountry(e.target.value)} className="border p-2"><option>Canada</option><option>India</option><option>USA</option></select>
+        <input value={state} onChange={e=>setState(e.target.value)} placeholder="State / Province" className="border p-2" />
+        <input value={district} onChange={e=>setDistrict(e.target.value)} placeholder="District" className="border p-2" />
+      </div>
+      <div className="grid grid-cols-2 gap-2 mb-2">
+        <input value={city} onChange={e=>setCity(e.target.value)} placeholder="City / Village" className="w-full border p-2" />
+        <input value={village_area} onChange={e=>setVillage(e.target.value)} placeholder="Village / Area" className="w-full border p-2" />
+      </div>
+      <select value={land_subtype} onChange={e=>setLandSubtype(e.target.value)} className="w-full border p-2 mb-2"><option>Commercial Land</option><option>Industrial Land</option><option>Agricultural Land</option><option>Residential Plot</option></select>
+
       <input value={address} onChange={e=>setAddress(e.target.value)} placeholder="Address" className="w-full border p-2 mb-2" />
       <div className="flex gap-2">
         <select value={type} onChange={e=>setType(e.target.value)} className="w-full border p-2 mb-2">

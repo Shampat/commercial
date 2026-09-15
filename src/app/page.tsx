@@ -20,7 +20,7 @@ const CATEGORIES = [
   { id: 'plaza', name: 'Plaza', count: 6, Icon: Building },
 ];
 
-const CITIES = ['Brampton', 'Mississauga', 'Caledon', 'Vaughan', 'Etobicoke', 'Oakville', 'Toronto', 'Milton', 'Bolton', 'Georgetown'];
+const CITIES_FALLBACK = ['Brampton', 'Mississauga', 'Caledon', 'Vaughan', 'Etobicoke', 'Oakville', 'Toronto', 'Milton', 'Bolton', 'Georgetown'];
 const LEASE_TYPES = ['For Lease', 'For Sale', 'For Sublease', 'Assignment'];
 const SQFT_OPTIONS = ['10K Exact', '5K-10K', '10K-15K', '15K+', 'Custom'];
 const PRICE_OPTIONS = ['$0-$10K', '$10K-$20K', '$20K-$30K', '$30K+', 'Custom'];
@@ -106,7 +106,7 @@ const TERMS = [
   { term: 'Triple Net (NNN)', def: 'Tenant pays property taxes, insurance, maintenance on top of rent.', ex: 'Industrial in Vaughan: NNN $12 PSF on top of base.', color: 'bg-white' },
   { term: 'Double Net (NN)', def: 'Tenant pays taxes + insurance, landlord pays maintenance.', ex: 'Common for older plazas in Etobicoke.', color: 'bg-orange-50' },
   { term: 'NOI', def: 'Net Operating Income – income after operating expenses.', ex: 'NOI used to value a 10K plaza at 6% cap.', color: 'bg-white' },
-  { term: 'CAP Rate', def: 'Return on investment: NOI / Property Value.', ex: 'GTA West retail cap rates 5.5% - 6.5% in 2024.', color: 'bg-white' },
+  { term: 'CAP Rate', def: 'Return on investment: NOI / Property Value.', ex: 'Retail cap rates 5.5% - 6.5% (Canada) / 8-9% (India).', color: 'bg-white' },
   { term: 'TMI', def: 'Taxes, Maintenance, Insurance – additional rent components.', ex: 'TMI $14.50 PSF in Brampton gateway area.', color: 'bg-orange-50' },
   { term: 'Base Rent', def: 'Minimum rent paid for use of space, before TMI.', ex: 'Base $16 PSF for 10K sq ft = $13,333/mo.', color: 'bg-white' },
   { term: 'Additional Rent', def: 'Extra charges beyond base – TMI, utilities etc.', ex: 'Additional rent adds $12K/mo on 10K unit.', color: 'bg-white' },
@@ -146,7 +146,16 @@ export default function Page() {
       setDbListings(mapped);
     });
   }, []);
+  const dbCountries = [...new Set((dbListings as any[]).map((d:any)=>d.country).filter(Boolean))];
+  const CITIES = dbListings.length>0 ? [...new Set([...PROPERTIES.map((p:any)=>p.city), ...dbListings.map((d:any)=>d.city)].filter(Boolean))] as string[] : CITIES_FALLBACK;
   const DISPLAY_PROPERTIES = dbListings.length > 0 ? [...dbListings, ...PROPERTIES.slice(0, 70-dbListings.length)] : PROPERTIES;
+  const dynamicCounts = {
+    all: DISPLAY_PROPERTIES.length,
+    office: DISPLAY_PROPERTIES.filter((p:any)=>p.type?.toLowerCase().includes('office')).length,
+    land: DISPLAY_PROPERTIES.filter((p:any)=>p.type?.toLowerCase().includes('land')).length,
+  };
+  const countryPills = [...new Set(DISPLAY_PROPERTIES.map((p:any)=>p.country).filter(Boolean))];
+ const dynamicCities = [...new Set(DISPLAY_PROPERTIES.map((p:any)=>p.city).filter(Boolean))];
 
   useEffect(() => {
     if (toast) {
@@ -271,7 +280,7 @@ export default function Page() {
             <div className="flex flex-wrap items-center gap-2.5 mt-4">
               <span className="inline-flex items-center gap-2 bg-zinc-900 text-white text-[12px] font-semibold px-3 py-1 rounded-full">
                 <span className="w-4 h-4 bg-white text-zinc-900 rounded-full flex items-center justify-center text-[10px] font-bold">16</span>
-                16 spaces • GTA West
+                {dbListings.length} Live • {dynamicCities.length} Cities • {dbCountries.join(' + ') || 'Canada'}
               </span>
               <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium px-3 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live inventory
@@ -279,7 +288,7 @@ export default function Page() {
             </div>
             <p className="mt-3 text-[13.5px] text-zinc-500 max-w-[640px] leading-[1.5]">
               Office, Retail, Industrial, Warehouse, Medical, Restaurant, Plaza spaces in{' '}
-              <span className="text-zinc-900 font-medium">Brampton, Mississauga, Caledon, Vaughan</span> • Verified • TMI Included
+              <span className="text-zinc-900 font-medium">{[...new Set([...PROPERTIES.map((p:any)=>p.city), ...dbListings.map((d:any)=>d.city)].filter(Boolean))].slice(0,6).join(", ")} </span> • Verified • TMI Included
             </p>
           </div>
           <div className="hidden md:flex items-center gap-2 text-[12px] text-zinc-400">
@@ -296,7 +305,7 @@ export default function Page() {
             <div className="flex items-start justify-between gap-4 mb-8">
               <div>
                 <h2 className="text-[24px] md:text-[30px] font-bold tracking-tight">Commercial Terms • Ontario</h2>
-                <p className="text-[13.5px] text-zinc-500 mt-2 max-w-[600px]">12 essential terms every tenant, landlord and investor should know for GTA West 10K commercial.</p>
+                <p className="text-[13.5px] text-zinc-500 mt-2 max-w-[600px]">12 essential terms every tenant, landlord and investor should know - same rules for Canada, India, USA.</p>
               </div>
               <button onClick={() => setActiveTab('listings')} className="px-4 py-2 rounded-full bg-zinc-900 text-white text-[13px] font-medium">Back to Listings</button>
             </div>
