@@ -17,11 +17,6 @@ export async function getListingById(id: string) {
   return data
 }
 
-export async function deleteListing(id: string) {
-  const { error } = await supabase.from('listings').delete().eq('id', id)
-  if (error) throw error
-}
-
 export async function addListing(listing: any) {
   const payload = {...listing, is_demo: false }
   const { data, error } = await supabase.from('listings').insert(payload).select().single()
