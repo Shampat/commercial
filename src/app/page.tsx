@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import RealMap from "@/components/RealMap";
 import { getListings } from '@/lib/db';
 import { 
   Building2, Store, Factory, Warehouse as WarehouseIcon, Stethoscope, UtensilsCrossed, 
@@ -34,7 +35,7 @@ const PROPERTIES = [
     price: '$18,500/mo',
     type: 'For Lease',
     category: 'Office',
-    img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+    img: 'images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
     verified: true,
     agent: { name: 'Arshdeep S.', initials: 'AS', pro: true },
   },
@@ -46,7 +47,7 @@ const PROPERTIES = [
     price: '$22,000/mo',
     type: 'For Lease',
     category: 'Retail',
-    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80',
+    img: 'images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80',
     verified: true,
     agent: { name: 'Jasleen K.', initials: 'JK', pro: true },
   },
@@ -58,7 +59,7 @@ const PROPERTIES = [
     price: '$16,750/mo',
     type: 'For Lease',
     category: 'Industrial',
-    img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
+    img: 'images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
     verified: true,
     agent: { name: 'Manpreet D.', initials: 'MD', pro: true },
   },
@@ -70,7 +71,7 @@ const PROPERTIES = [
     price: '$1.45M',
     type: 'For Sale',
     category: 'Medical Office',
-    img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80',
+    img: 'images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80',
     verified: true,
     agent: { name: 'Sarab B.', initials: 'SB', pro: true },
   },
@@ -82,7 +83,7 @@ const PROPERTIES = [
     price: '$14,200/mo',
     type: 'For Lease',
     category: 'Restaurant',
-    img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
+    img: 'images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
     verified: true,
     agent: { name: 'Harleen P.', initials: 'HP', pro: true },
   },
@@ -94,7 +95,7 @@ const PROPERTIES = [
     price: '$19,800/mo',
     type: 'For Lease',
     category: 'Warehouse',
-    img: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=800&q=80',
+    img: 'images.unsplash.com/photo-1553413077-190dd305871c?w=800&q=80',
     verified: true,
     agent: { name: 'Gurpreet S.', initials: 'GS', pro: true },
   },
@@ -270,8 +271,8 @@ export default function Page() {
             </h1>
             <div className="flex flex-wrap items-center gap-2.5 mt-4">
               <span className="inline-flex items-center gap-2 bg-zinc-900 text-white text-[12px] font-semibold px-3 py-1 rounded-full">
-                <span className="w-4 h-4 bg-white text-zinc-900 rounded-full flex items-center justify-center text-[10px] font-bold">16</span>
-                16 spaces • GTA West
+                <span className="w-4 h-4 bg-white text-zinc-900 rounded-full flex items-center justify-center text-[10px] font-bold">70</span>
+                70 spaces • GTA West
               </span>
               <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium px-3 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live inventory
@@ -342,7 +343,7 @@ export default function Page() {
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><MapIcon className="w-4 h-4" /></div>
                 <div>
                   <div className="font-semibold">commercial.akalhom...</div>
-                  <div className="text-white/60 text-[11px]">Canonical: https://commercial.akalhom... </div>
+                  <div className="text-white/60 text-[11px]">Canonical: commercial.akalhom... </div>
                 </div>
               </div>
               <div className="hidden md:flex bg-white border border-zinc-200 rounded-2xl px-4 py-3 text-[12px] shadow items-center gap-2">
@@ -599,7 +600,7 @@ export default function Page() {
                     <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center"><MapIcon className="w-3.5 h-3.5" /></div>
                     <div>
                       <div className="font-semibold">commercial.akalhom...</div>
-                      <div className="text-white/50 text-[10px]">Canonical: https://commercial.akalhom...</div>
+                      <div className="text-white/50 text-[10px]">Canonical: commercial.akalhom...</div>
                     </div>
                   </div>
                 </div>
@@ -697,7 +698,7 @@ export default function Page() {
       </footer>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         @keyframes slideIn { from { transform: translateY(-10px); opacity:0 } to { transform: translateY(0); opacity:1 } }
         @keyframes fadeIn { from { opacity:0; transform: translateY(-4px) } to { opacity:1; transform: translateY(0) } }
