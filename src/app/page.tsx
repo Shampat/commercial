@@ -1,6 +1,6 @@
 "use client";
-import RealMap from "@/components/RealMap"
 import React, { useState, useEffect } from 'react';
+import RealMap from "@/components/RealMap";
 import { useRouter } from 'next/navigation';
 import { getListings } from '@/lib/db';
 import { 
@@ -625,7 +625,9 @@ export default function Page() {
         </div>
       )}
 
-      {/* Footer */}
+      <div className="mx-auto max-w- px-6 mt-12 mb-6"><div className="flex items-center gap-2 mb-3"><div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div><h2 className="text- font-bold">Live Supabase Map • {dbListings.length} listings • Brampton</h2></div><RealMap listings={dbListings} /></div>
+
+{/* Footer */}
       <footer className="border-t border-zinc-200 bg-white">
         <div className="mx-auto max-w-[1440px] px-4 md:px-8 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
