@@ -128,7 +128,7 @@ export default function Page() {
   const [toast, setToast] = useState<string | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
-  const [dbListings, setDbListings] = useState<any[]>([]);
+  const [filteredListings, setDbListings] = useState<any[]>([]);
   useEffect(() => {
     getListings().then((data:any[]) => {
       const mapped = data.map((l:any) => ({
@@ -147,7 +147,7 @@ export default function Page() {
       setDbListings(mapped);
     });
   }, []);
-  const DISPLAY_PROPERTIES = dbListings.length > 0 ? [...dbListings, ...PROPERTIES.slice(0, 70-dbListings.length)] : PROPERTIES;
+  const DISPLAY_PROPERTIES = filteredListings.length > 0 ? [...filteredListings, ...PROPERTIES.slice(0, 70-filteredListings.length)] : PROPERTIES;
 
   useEffect(() => {
     if (toast) {
