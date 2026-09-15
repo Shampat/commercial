@@ -11,6 +11,12 @@ export async function getListings() {
   return data || []
 }
 
+export async function getListingById(id: string) {
+  const { data, error } = await supabase.from('listings').select('*').eq('id', id).single()
+  if (error) { console.error(error); return null }
+  return data
+}
+
 export async function addListing(listing: any) {
   const payload = {...listing, is_demo: false }
   const { data, error } = await supabase.from('listings').insert(payload).select().single()
