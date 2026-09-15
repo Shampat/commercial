@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { getListingById } from "@/lib/db"
+import { getListingById, deleteListing } from "@/lib/db"
 import { MapPin, ArrowLeft, ShieldCheck } from "lucide-react"
 export default function ListingDetail(){
   const { id } = useParams()
@@ -33,6 +33,7 @@ export default function ListingDetail(){
           <div className="text- font-black mt-4">{listing.price}</div>
           <p className="mt-6 text-[13.5px] text-zinc-600">{listing.description}</p>
           <button onClick={()=>router.push('/')} className="w-full mt-6 h-11 rounded-full bg-zinc-900 text-white">Back to Listings</button>
+          <button onClick={handleDelete} className="w-full mt-3 h-11 rounded-full bg-red-600 text-white">Delete Listing</button>
         </div>
       </div>
     </div>
