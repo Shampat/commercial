@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getListings } from '@/lib/db';
 import { 
   Building2, Store, Factory, Warehouse as WarehouseIcon, Stethoscope, UtensilsCrossed, 
@@ -116,6 +117,7 @@ const TERMS = [
 ];
 
 export default function Page() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('listings');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [city, setCity] = useState('All Cities');
@@ -572,7 +574,7 @@ export default function Page() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => triggerToast(`Chat with ${prop.agent.name}`)} className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center hover:bg-emerald-100 transition-colors"><MessageCircle className="w-4 h-4" /></button>
-                          <button onClick={() => triggerToast(`Viewing ${prop.id}`)} className="h-8 px-3.5 rounded-full bg-zinc-900 text-white text-[12px] font-medium hover:bg-black transition-colors">View</button>
+                          <button onClick={() => prop.is_real ? router.push(`/listing/${prop.id}`) : triggerToast(`Demo ${prop.id} - add real listing in /post`)} className="h-8 px-3.5 rounded-full bg-zinc-900 text-white text-[12px] font-medium hover:bg-black transition-colors">View</button>
                         </div>
                       </div>
                     </div>
