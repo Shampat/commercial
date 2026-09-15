@@ -333,38 +333,12 @@ export default function Page() {
       ) : activeTab === 'map' ? (
         /* MAP TAB */
         <div className="mx-auto max-w-[1440px] px-4 md:px-8 pb-12">
-          <div className="rounded-[24px] overflow-hidden border border-zinc-200 bg-[#F6F1E9] h-[640px] relative">
-            {/* Grid pattern */}
-            <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                <div className="w-[320px] h-[320px] rounded-full border border-dashed border-zinc-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                <div className="w-[200px] h-[200px] rounded-full border border-dashed border-zinc-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                {/* Clusters */}
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold text-[18px] shadow-[0_8px_24px_rgba(0,0,0,0.25)] border-4 border-white">14</div>
-                  <div className="mt-2 bg-zinc-900 text-white text-[11px] font-medium px-2.5 py-1 rounded-full shadow">Mississauga • 14×10K</div>
-                </div>
-                <div className="absolute -top-12 -left-20 bg-white border border-zinc-200 rounded-full px-3 py-1.5 text-[12px] font-medium shadow flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-zinc-900 text-white flex items-center justify-center text-[11px] font-bold">6</div>Brampton</div>
-                <div className="absolute -bottom-8 left-12 bg-white border border-zinc-200 rounded-full px-3 py-1.5 text-[12px] font-medium shadow flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-zinc-900 text-white flex items-center justify-center text-[11px] font-bold">8</div>Vaughan • 8×10K</div>
-                <div className="absolute top-10 -right-24 bg-[#FF6A00] text-white border border-[#FF6A00] rounded-full px-3 py-1.5 text-[12px] font-bold shadow flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-white text-[#FF6A00] flex items-center justify-center text-[11px] font-bold">3</div>Caledon</div>
-              </div>
-            </div>
-            <div className="absolute bottom-4 left-4 right-4 md:left-4 md:right-auto flex gap-3">
-              <div className="bg-zinc-900 text-white rounded-2xl px-4 py-3 text-[12px] leading-[1.4] shadow-xl flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center"><MapIcon className="w-4 h-4" /></div>
-                <div>
-                  <div className="font-semibold">commercial.akalhom...</div>
-                  <div className="text-white/60 text-[11px]">Canonical: https://commercial.akalhom... </div>
-                </div>
-              </div>
-              <div className="hidden md:flex bg-white border border-zinc-200 rounded-2xl px-4 py-3 text-[12px] shadow items-center gap-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" /> 31 clusters • Drag to explore • Scroll to zoom
-              </div>
-            </div>
-          </div>
+          <div className="rounded- overflow-hidden border border-zinc-200 bg-white h- relative">
+          <RealMap listings={dbListings} />
         </div>
-      ) : activeTab === 'tools' ? (
+      </div>
+    </div>
+    ) : activeTab === 'tools' ? (
         <div className="mx-auto max-w-[1440px] px-4 md:px-8 pb-16">
           <div className="rounded-[24px] border border-zinc-200 p-10 text-center bg-zinc-50">
             <Wrench className="w-10 h-10 mx-auto text-zinc-300 mb-4" />
