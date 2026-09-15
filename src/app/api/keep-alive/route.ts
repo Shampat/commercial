@@ -6,12 +6,12 @@ export async function GET() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-  // simple query = counts as activity for Supabase
-  const { data, error } = await supabase.from('properties').select('id').limit(1)
+  const { error } = await supabase.from('listings').select('id').limit(1)
   return NextResponse.json({ 
     ok: true, 
     active: true, 
     time: new Date().toISOString(),
-    supabase_ok: !error
+    supabase_ok: !error,
+    table: 'listings'
   })
 }
