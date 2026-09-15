@@ -271,8 +271,7 @@ export default function Page() {
           ))}
         </div>
       </header>
- {/* REAL MAP INFO */}
- {realListings.length > 0 && <div className="mx-auto max-w- px-6 py-2 text- text-emerald-700 bg-emerald-50 rounded-full w-fit">Showing {realListings.length} real listings on map • Brampton</div>}
+ 
 
       {/* Hero */}
       <div className="mx-auto max-w-[1440px] px-4 md:px-8 pt-8 md:pt-12 pb-6">
