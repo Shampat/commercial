@@ -12,7 +12,7 @@ type Tab = 'listings' | 'map' | 'terms' | 'tools';
 
 const CATEGORIES = [
   { id: 'all', name: 'All Spaces', count: 70, Icon: LayoutGrid },
-  { id: 'office', name: 'all', count: 18, Icon: Building2 },
+  { id: 'office', name: 'Office Space', count: 18, Icon: Building2 },
   { id: 'retail', name: 'Retail', count: 12, Icon: Store },
   { id: 'industrial', name: 'Industrial', count: 15, Icon: Factory },
   { id: 'warehouse', name: 'Warehouse', count: 8, Icon: WarehouseIcon },
@@ -121,7 +121,7 @@ export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [city, setCity] = useState('All Cities');
   const [leaseType, setLeaseType] = useState('Lease Type');
-  const [sqft, setSqft] = useState('10K Exact');
+  const [sqft, setSqft] = useState('all');
   const [price, setPrice] = useState('Price');
   const [activePills, setActivePills] = useState([]);
   const [sort, setSort] = useState('Newest');
