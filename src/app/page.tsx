@@ -1,4 +1,5 @@
 "use client";
+import RealMap from "@/components/RealMap"
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getListings } from '@/lib/db';
