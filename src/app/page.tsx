@@ -272,7 +272,7 @@ export default function Page() {
             <div className="flex flex-wrap items-center gap-2.5 mt-4">
               <span className="inline-flex items-center gap-2 bg-zinc-900 text-white text-[12px] font-semibold px-3 py-1 rounded-full">
                 <span className="w-4 h-4 bg-white text-zinc-900 rounded-full flex items-center justify-center text-[10px] font-bold">70</span>
-                70 spaces • GTA West
+                70 spaces • Postal code = map pin • GTA West
               </span>
               <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12px] font-medium px-3 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live inventory
