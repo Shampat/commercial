@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, CheckCircle2, CircleAlert, Plus, X } from "lucide-react"
-import { supabase } from "@/lib/db"
+import { createOwnedListing, supabase } from "@/lib/db"
 
 const CATEGORIES = ["Office", "Retail", "Industrial", "Warehouse", "Medical Office", "Restaurant", "Plaza"]
 const LISTING_TYPES = ["For Lease", "For Sale", "For Sublease", "Assignment"]
@@ -12,9 +12,12 @@ const LISTING_TYPES = ["For Lease", "For Sale", "For Sublease", "Assignment"]
 export default function NewListingPage() {
   const router = useRouter()
   const [submitted, setSubmitted] = useState(false)
+  const [createdId, setCreatedId] = useState<string | null>(null)
   const [images, setImages] = useState<string[]>([])
   const [imageUrl, setImageUrl] = useState("")
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -34,11 +37,30 @@ export default function NewListingPage() {
     setImages((current) => current.filter((_, i) => i !== index))
   }
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    // Persistence intentionally waits for verified production schema/RLS.
-    // The route is already protected by Supabase authentication.
-    setSubmitted(true)
+    setSaving(true)
+    setError("")
+
+    const form = new FormData(event.currentTarget)
+    try {
+      const listing = await createOwnedListing({
+        title: String(form.get("title") || "").trim(),
+        category: String(form.get("category") || ""),
+        type: String(form.get("type") || ""),
+        address: String(form.get("address") || "").trim(),
+        city: String(form.get("city") || "").trim(),
+        price: String(form.get("price") || "").trim(),
+        description: String(form.get("description") || "").trim(),
+      })
+
+      setCreatedId(listing.id)
+      setSubmitted(true)
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Unable to save your listing.")
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (checkingAuth) return <main className="min-h-screen bg-zinc-50 p-8 text-zinc-500">Checking your account…</main>
@@ -48,11 +70,12 @@ export default function NewListingPage() {
       <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900">
         <div className="mx-auto max-w-2xl rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm md:p-12">
           <CheckCircle2 className="mb-5 h-12 w-12 text-emerald-600" />
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-zinc-400">Listing draft</p>
-          <h1 className="text-3xl font-semibold tracking-tight">Your listing details are ready.</h1>
-          <p className="mt-4 leading-7 text-zinc-600">The account and owner-management layer is being connected to the live listings table. No listing is claimed to be published until that database/RLS connection is verified.</p>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-zinc-400">Listing draft saved</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Your property is now in your account.</h1>
+          <p className="mt-4 leading-7 text-zinc-600">The draft is owned by your authenticated account. It is not public until you explicitly publish it.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/account/listings" className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white">My listings</Link>
+            {createdId && <Link href={`/listings/${createdId}/edit`} className="rounded-full border border-zinc-200 px-5 py-2.5 text-sm font-medium">Edit draft</Link>}
             <Link href="/marketplace" className="rounded-full border border-zinc-200 px-5 py-2.5 text-sm font-medium">Browse marketplace</Link>
           </div>
         </div>
@@ -103,7 +126,8 @@ export default function NewListingPage() {
             <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"><h2 className="font-semibold">Your responsibility</h2><ul className="mt-4 space-y-3 text-sm leading-6 text-zinc-600"><li>• You must have authority to advertise the property.</li><li>• Information, pricing, photos and availability must be accurate.</li><li>• You are responsible for applicable zoning, licensing and legal requirements.</li><li>• Do not post misleading, fraudulent, discriminatory or unlawful content.</li><li>• Update or remove a listing when material information changes.</li></ul></div>
             <div className="rounded-3xl border border-orange-200 bg-orange-50 p-6"><div className="flex gap-3"><CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#FF6A00]" /><p className="text-sm leading-6 text-zinc-700">The marketplace does not independently verify every listing. Listings may be reported and removed when they violate the platform rules.</p></div></div>
             <label className="flex gap-3 rounded-2xl border border-zinc-200 bg-white p-4 text-sm leading-6 shadow-sm"><input required type="checkbox" className="mt-1" /><span>I confirm that I am authorized to submit this listing and agree to the marketplace listing rules.</span></label>
-            <button type="submit" className="w-full rounded-full bg-[#FF6A00] px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:brightness-95">Save listing draft</button>
+            {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm leading-5 text-red-700">{error}</p>}
+            <button disabled={saving} type="submit" className="w-full rounded-full bg-[#FF6A00] px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:brightness-95 disabled:opacity-50">{saving ? "Saving draft…" : "Save listing draft"}</button>
           </aside>
         </form>
       </div>
