@@ -1,37 +1,108 @@
 import { createClient } from '@supabase/supabase-js'
-import { BRAND } from '@/config/brand'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
+/** Public marketplace reads go through the hardened, security-invoker view. */
 export async function getListings() {
-  const { data, error } = await supabase.from('listings').select('*').order('created_at', { ascending: false })
-  if (error) { console.error(error); return [] }
+  const { data, error } = await supabase
+    .from('public_marketplace_listings')
+    .select('*')
+
+  if (error) {
+    console.error('Unable to load public marketplace listings:', error)
+    return []
+  }
+
   return data || []
 }
 
 export async function getListingById(id: string) {
-  const { data, error } = await supabase.from('listings').select('*').eq('id', id).single()
-  if (error) { console.error(error); return null }
-  return data
-}
+  const { data, error } = await supabase
+    .from('public_marketplace_listings')
+    .select('*')
+    .eq('id', id)
+    .single()
 
-export async function addListing(listing: any) {
-  const payload = {...listing, is_demo: false }
-  const { data, error } = await supabase.from('listings').insert(payload).select().single()
-  if (error) throw error
-  const { count: total } = await supabase.from('listings').select('*', { count: 'exact', head: true })
-  if ((total || 0) > BRAND.maxDemoCapacity) {
-    const { data: oldest } = await supabase.from('listings').select('id').eq('is_demo', true).order('created_at', { ascending: true }).limit(1)
-    if (oldest?.[0]) {
-      await supabase.from('listings').delete().eq('id', oldest[0].id)
-    }
+  if (error) {
+    console.error('Unable to load public marketplace listing:', error)
+    return null
   }
+
   return data
 }
 
-export async function deleteListing(id: string) {
-  const { error } = await supabase.from('listings').delete().eq('id', id)
+async function requireUser() {
+  const { data, error } = await supabase.auth.getUser()
+  if (error) throw error
+  if (!data.user) throw new Error('You must be signed in to manage listings.')
+  return data.user
+}
+
+/** Return only listings owned by the current authenticated account. */
+export async function getMyListings() {
+  await requireUser()
+
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data || []
+}
+
+/** Create a draft owned by the current authenticated account. RLS verifies created_by. */
+export async function createOwnedListing(listing: Record<string, unknown>) {
+  const user = await requireUser()
+  const payload = {
+    ...listing,
+    created_by: user.id,
+    status: 'DRAFT',
+  }
+
+  const { data, error } = await supabase
+    .from('listings')
+    .insert(payload)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+/** Update an existing listing; RLS independently enforces ownership. */
+export async function updateOwnedListing(id: string, changes: Record<string, unknown>) {
+  await requireUser()
+
+  const { data, error } = await supabase
+    .from('listings')
+    .update(changes)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+/** Publish through the existing production status model. Public visibility is controlled by the ACTIVE policy. */
+export async function publishOwnedListing(id: string) {
+  return updateOwnedListing(id, { status: 'ACTIVE' })
+}
+
+export async function unpublishOwnedListing(id: string) {
+  return updateOwnedListing(id, { status: 'DRAFT' })
+}
+
+export async function deleteOwnedListing(id: string) {
+  await requireUser()
+
+  const { error } = await supabase
+    .from('listings')
+    .delete()
+    .eq('id', id)
+
   if (error) throw error
 }
