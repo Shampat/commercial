@@ -53,15 +53,13 @@ export async function getMyListings() {
   return data || []
 }
 
-/** Create a draft whose owner_id is always the current authenticated user. */
+/** Create a draft owned by the current authenticated account. RLS verifies created_by. */
 export async function createOwnedListing(listing: Record<string, unknown>) {
   const user = await requireUser()
   const payload = {
     ...listing,
-    owner_id: user.id,
-    status: 'draft',
-    is_public: false,
-    is_demo: false,
+    created_by: user.id,
+    status: 'DRAFT',
   }
 
   const { data, error } = await supabase
@@ -89,12 +87,13 @@ export async function updateOwnedListing(id: string, changes: Record<string, unk
   return data
 }
 
+/** Publish through the existing production status model. Public visibility is controlled by the ACTIVE policy. */
 export async function publishOwnedListing(id: string) {
-  return updateOwnedListing(id, { status: 'published', is_public: true })
+  return updateOwnedListing(id, { status: 'ACTIVE' })
 }
 
 export async function unpublishOwnedListing(id: string) {
-  return updateOwnedListing(id, { status: 'draft', is_public: false })
+  return updateOwnedListing(id, { status: 'DRAFT' })
 }
 
 export async function deleteOwnedListing(id: string) {
